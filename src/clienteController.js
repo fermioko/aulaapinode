@@ -3,6 +3,8 @@ const db = require('./db');//IMPORTANDO O NOSSO MÓDULO DE CONEXÃO COM O BANCO.
 const Joi = require('joi');
 //JOI - valida se esta estrutura
 
+const bcrypt = require('bcrypt');
+
 //Validação dos dados
 const clienteSchema = Joi.object({
     cpf: Joi.string().length(11).required(),
@@ -51,34 +53,41 @@ exports.buscarCliente = (req, res) => {
 
 //Adicionar um novo cliente - 01-11-2023
 exports.adicionarCliente = (req, res) => {
-    const {cpf, nome, endereco, bairro, complemento, cep, telefone, email, senha } = req.body; // req.body acessa objeto do corpo da requisição que foi recebido.
+    const { cpf, nome, endereco, bairro, complemento, cep, telefone, email, senha } = req.body; // req.body acessa objeto do corpo da requisição que foi recebido.
 
     const { error } = clienteSchema.validate({ cpf, nome, endereco, bairro, complemento, cep, telefone, email, senha }); //clienteSchema aqui utilizamos o joi para verificar os dados recebidos e garantir a integridade para só depois adicionar no banco.
 
     if (error) {
-        res.status(400).json({ error: 'Dados de cliente inválidos'});
+        res.status(400).json({ error: 'Dados de cliente inválidos' });
         return;
     }
 
-    const novoCliente = {
-        cpf, 
-        nome, 
-        endereco, 
-        bairro, 
-        complemento, 
-        cep, 
-        telefone, 
-        email, 
-        senha
-    };
-
-    db.query('INSERT INTO cliente SET ?', novoCliente, (err, result) => {
+    bcrypt.hash(senha, 10, (err, hash) => {
         if (err) {
-            console.error('Erro ao adicionar cliente:', err);
-            res.status(500).json({ error: 'Erro interno do servidor '});
-            return;
+            console.error('Erro ao criptografar a senhas:', err);
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
-        res.json({ message: 'Cliente adicionado com sucesso' });
+
+        const novoCliente = {
+            cpf,
+            nome,
+            endereco,
+            bairro,
+            complemento,
+            cep,
+            telefone,
+            email,
+            senha: hash
+        };
+
+        db.query('INSERT INTO cliente SET ?', novoCliente, (err, result) => {
+            if (err) {
+                console.error('Erro ao adicionar cliente:', err);
+                res.status(500).json({ error: 'Erro interno do servidor ' });
+                return;
+            }
+            res.json({ message: 'Cliente adicionado com sucesso' });
+        });
     });
 };
 
@@ -90,28 +99,28 @@ exports.atualizarCliente = (req, res) => {
     const { error } = clienteSchema.validate({ cpf, nome, endereco, bairro, complemento, cep, telefone, email, senha });
 
     if (error) {
-        res.status(400).json({ error: 'Dados de cliente inválidos '});
+        res.status(400).json({ error: 'Dados de cliente inválidos ' });
         return;
     }
 
     const clienteAtualizado = {
-        nome, 
-        endereco, 
-        bairro, 
-        complemento, 
-        cep, 
-        telefone, 
+        nome,
+        endereco,
+        bairro,
+        complemento,
+        cep,
+        telefone,
         email
     };
 
-    db.query('UPDATE cliente SET ? WHERE cpf = ?', [clienteAtualizado, cpf], (err, result) =>{
+    db.query('UPDATE cliente SET ? WHERE cpf = ?', [clienteAtualizado, cpf], (err, result) => {
         if (err) {
             console.error('Erro ao atualizar cliente:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
             return;
         }
         res.json({ message: 'Cliente atualizado com sucesso' });
-    } );
+    });
 };
 
 //DELETE - Deletar um cliente
@@ -125,6 +134,6 @@ exports.deletarCliente = (req, res) => {
             return;
         }
         res.json({ message: 'Cliente deletado com sucesso' });
-    } );
+    });
 };
 
