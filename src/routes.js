@@ -89,19 +89,17 @@ router.patch('/pedido/:id', pedidoController.atualizarPedido);
 //DELETE
 router.delete('/pedido/:id',pedidoController.deletarPedido);
 
-//Controle Item_Pedido
+//Controle Item_Pedido (ITEM_PEDIDO - int INT, qtde TINYINIT, valor_parcial decimal(7,2), (FK)id_produto INT, (FK)id_pedido)
+const itemPedidoController = require('./itemPedidoController');
 //Rotas para item_pedido
-
-/*
-ITEM_PEDIDO - int INT, qtde TINYINIT, valor_parcial decimal(7,2), (FK)id_produto INT, (FK)id_pedido
-*/
-
-
-
-
-
-
-
+router.get('/itemPedido', itemPedidoController.listarItemPedido);
+router.get('/itemPedido', itemPedidoController.buscarItemPedido);
+//POST
+router.post('/itemPedido', itemPedidoController.adicionarItemPedido);
+//PATCH
+router.patch('/itemPedido/:id', itemPedidoController.atualizarItemPedido);
+//DELETE
+router.delete('/itemPedido/:id', itemPedidoController.deletarItemPedido);
 
 //Rota para o login
 router.post('/login', loginController.loginCliente);
