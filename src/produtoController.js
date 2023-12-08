@@ -1,6 +1,5 @@
 // PRODUTO - id, nome_produto, descricao, valor, imagem
 
-const { ifError } = require('assert');
 const db = require('./db'); //importa BD
 
 const Joi = require('joi'); //valida estrutura

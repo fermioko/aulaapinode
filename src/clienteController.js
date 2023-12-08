@@ -15,7 +15,6 @@ const clienteSchema = Joi.object({
     cep: Joi.string().required(),
     telefone: Joi.string().required(),
     email: Joi.string().email().required(),
-    senha: Joi.string().min(6).required(),
 });
 
 //Listar todos os clientes

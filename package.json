@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node node_modules/jest/bin/jest.js",
+    "test:watch": "node node_modules/jest/bin/jest.js --watchAll",
+    "test:coverage": "node node_modules/jest/bin/jest.js --coverage",
     "dev": "node --watch src/index.js"
   },
   "keywords": [],
@@ -18,5 +20,8 @@
     "mysql": "^2.18.1",
     "node": "^21.0.0"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
