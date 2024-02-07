@@ -7,7 +7,7 @@ const router = express.Router();
 //O ISSO PERMITE QUE A GENTE CRIE DIFERENTES URLs E ENDPOINTs PARA QUE O FRONTEND POSSA FAZER CHAMADAS
 
 //PEGAR DO INDEX
-router.get("/", (req, res) =>{
+router.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + '/pages/home.html'))
 }) //SEGUIR INDEX
 //AQUI DEFINIMOS NOSSA ROTA PARA O ARQUIVO HTML USANDO O PATH PARA SEMPRE RETORNAR DINAMICAMENTE O QUE VEM ANTES DA "/pages/homt.html"
@@ -20,11 +20,11 @@ const clienteController = require('./clienteController');
 const loginController = require('./loginController');
 //CHAMANDO O ARQUIVO QUE CONTROLA O LOGIN
 
-router.use('/clientes',loginController.autenticarToken); 
+//router.use('/clientes',loginController.autenticarToken); 
 //autentica quando todos os campos do cliente 
 
-//Rotas para clientes
-router.get('/clientes', clienteController.listarClientes);
+//Rotas para clientes passando pela autenticação do token
+router.get('/clientes', loginController.autenticarToken, clienteController.listarClientes);
 router.get('/clientes/:cpf', clienteController.buscarCliente);
 
 //POST: Aceita criar algum objeto do servidor.
@@ -32,10 +32,10 @@ router.post('/clientes', clienteController.adicionarCliente);
 
 //PUT: Aceita substituir algum objeto do servidor. ALTERAÇÃO POR COMPLETO -- INCLUINDO O CPF QUE É A PK.
 //PATCH: Aceita alterar algum objeto do servidor.
-router.patch('/clientes/:cpf', clienteController.atualizarCliente);
+router.patch('/clientes/:cpf', loginController.autenticarToken, clienteController.atualizarCliente);
 
 //DELETE: Informa por meio do URL o objeto a ser deletado.
-router.delete('/clientes/:cpf', clienteController.deletarCliente);
+router.delete('/clientes/:cpf', loginController.autenticarToken, clienteController.deletarCliente);
 
 
 
@@ -46,11 +46,11 @@ router.get('/produtos', produtoController.listarProduto);
 router.get('/produtos/:id', produtoController.buscarProduto);
 router.get('/produtos/nome/:nome_produto', produtoController.buscarProdutoNome);
 //POST: produto
-router.post('/produtos', produtoController.adicionarProduto);
+router.post('/produtos', loginController.autenticarToken, produtoController.adicionarProduto);
 //PATCH
-router.patch('/produtos/:id', produtoController.atualizarProduto);
+router.patch('/produtos/:id', loginController.autenticarToken, produtoController.atualizarProduto);
 //DELETE
-router.delete('/produtos/:id', produtoController.deletarProduto);
+router.delete('/produtos/:id', loginController.autenticarToken, produtoController.deletarProduto);
 
 //Controle Regiao
 const regiaoController = require('./regiaoController');
@@ -79,15 +79,19 @@ router.delete('/entregador/:id', entregadorController.deletarEntregador);
 
 //Controle Pedido ( PEDIDO - id INT, forma_pagto varchar(12), qtde_itens TINYINT, valor_total decimal(8,2), (FK)cpf BIGINIT, (FK)id_entregador INT)
 const pedidoController = require('./pedidoController');
+
+router.use('/pedido', loginController.autenticarToken);
 //Rotas para pedido
+
 router.get('/pedido', pedidoController.listarPedido);
 router.get('/pedido/:id', pedidoController.buscarPedido);
+router.get('/pedido/cpf/:cpf', pedidoController.buscarPedidoCpf);
 //POST
 router.post('/pedido', pedidoController.adicionarPedido);
 //PATCH
 router.patch('/pedido/:id', pedidoController.atualizarPedido);
 //DELETE
-router.delete('/pedido/:id',pedidoController.deletarPedido);
+router.delete('/pedido/:id', pedidoController.deletarPedido);
 
 //Controle Item_Pedido (ITEM_PEDIDO - int INT, qtde TINYINIT, valor_parcial decimal(7,2), (FK)id_produto INT, (FK)id_pedido)
 const itemPedidoController = require('./itemPedidoController');

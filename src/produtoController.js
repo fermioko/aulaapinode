@@ -6,7 +6,7 @@ const Joi = require('joi'); //valida estrutura
 
 //Validação dos dados
 const produtoSchema = Joi.object({
-    id: Joi.string().required(), 
+    //id: Joi.string().required(), 
     nome_produto: Joi.string().required(), 
     descricao: Joi.string().required(), 
     valor: Joi.string().required(), 
@@ -65,9 +65,9 @@ exports.buscarProdutoNome = (req, res) => {
 
 //Adicionar um novo Produto
 exports.adicionarProduto = (req, res) => {
-    const {id, nome_produto, descricao, valor, imagem} = req.body;
+    const {nome_produto, descricao, valor, imagem} = req.body;
 
-    const { error } = produtoSchema.validate({id, nome_produto, descricao, valor, imagem });
+    const { error } = produtoSchema.validate({nome_produto, descricao, valor, imagem });
 
     if (error) {
         res.status(400).json({ error: 'Dados de produto inválidados'});
@@ -75,7 +75,7 @@ exports.adicionarProduto = (req, res) => {
     }
 
     const novoProduto = {
-        id, 
+        
         nome_produto, 
         descricao, 
         valor, 
@@ -97,10 +97,10 @@ exports.atualizarProduto = (req, res) => {
     const { id } = req.params;
     const { nome_produto, descricao, valor, imagem } = req.body;
 
-    const { error } = produtoSchema.validate({ id, nome_produto, descricao, valor, imagem });
+    const { error } = produtoSchema.validate({ nome_produto, descricao, valor, imagem });
 
     if (error) {
-       res.status(400).json({ error: 'Dados de cliente inválidos '});
+       res.status(400).json({ error: 'Dados de Produtos inválidos '});
        return;
     }
 

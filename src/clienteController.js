@@ -15,6 +15,7 @@ const clienteSchema = Joi.object({
     cep: Joi.string().required(),
     telefone: Joi.string().required(),
     email: Joi.string().email().required(),
+    senha: Joi.string().min(6).required()
 });
 
 //Listar todos os clientes
@@ -102,23 +103,34 @@ exports.atualizarCliente = (req, res) => {
         return;
     }
 
-    const clienteAtualizado = {
-        nome,
-        endereco,
-        bairro,
-        complemento,
-        cep,
-        telefone,
-        email
-    };
-
-    db.query('UPDATE cliente SET ? WHERE cpf = ?', [clienteAtualizado, cpf], (err, result) => {
+    //Atualizar Senha
+    bcrypt.hash(senha, 10, (err, hash) => {
         if (err) {
-            console.error('Erro ao atualizar cliente:', err);
+            console.error('Erro ao criptografar a senha:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
             return;
         }
-        res.json({ message: 'Cliente atualizado com sucesso' });
+
+
+        const clienteAtualizado = {
+            nome,
+            endereco,
+            bairro,
+            complemento,
+            cep,
+            telefone,
+            email,
+            senha: hash //Atualizar Senha
+        };
+
+        db.query('UPDATE cliente SET ? WHERE cpf = ?', [clienteAtualizado, cpf], (err, result) => {
+            if (err) {
+                console.error('Erro ao atualizar cliente:', err);
+                res.status(500).json({ error: 'Erro interno do servidor' });
+                return;
+            }
+            res.json({ message: 'Cliente atualizado com sucesso' });
+        });
     });
 };
 

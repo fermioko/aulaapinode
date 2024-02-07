@@ -4,7 +4,6 @@ const db = require('./db');
 const Joi = require('joi');
 
 const pedidoSchema = Joi.object({
-    id: Joi.string().required(),
     forma_pagto: Joi.string().required(),
     qtde_itens: Joi.string().required(),
     valor_total: Joi.string().required(),
@@ -28,7 +27,7 @@ exports.listarPedido = (req, res) => {
  exports.buscarPedido = (req, res) => {
     const { id } = req.params;
 
-    db.query('SELECT * FROM entregador WHERE id = ?', id, (err, result) => {
+    db.query('SELECT * FROM pedido WHERE id = ?', id, (err, result) => {
         if (err) {
             console.error('Erro ao buscar entregador:', err);
             res.status(500).json({ error: 'Erro interno do servidor' });
@@ -36,18 +35,37 @@ exports.listarPedido = (req, res) => {
         }
 
         if (result.length === 0) {
-            res.status(404).json({ error: 'Cliente não encontrado' });
+            res.status(404).json({ error: 'Pedido não encontrado' });
             return;
         }
         res.json(result[0]);
     });
  };
 
- //Adicionar novo entregador
- exports.adicionarPedido = (req, res) => {
-    const { id, forma_pagto, qtde_itens, valor_total, cpf, id_entregador } = req.body;
+ //Buscar um CPF
+ exports.buscarPedidoCpf = (req, res) => {
+    const { cpf } = req.params;
 
-    const { error } = pedidoSchema.validate({ id, forma_pagto,qtde_itens, valor_total, cpf, id_entregador });
+    db.query('SELECT * FROM pedido WHERE cpf = ?', cpf, (err, result) => {
+        if (err) {
+            console.error('Erro ao buscar pedido por cpf:', err);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+            return;
+        }
+
+        if (result.length === 0) {
+            res.status(404).json({ error: 'Pedido não encontrado' });
+            return;
+        }
+        res.json(result[0]);
+    });
+ };
+
+ //Adicionar novo pedido
+ exports.adicionarPedido = (req, res) => {
+    const { forma_pagto, qtde_itens, valor_total, cpf, id_entregador } = req.body;
+
+    const { error } = pedidoSchema.validate({ forma_pagto,qtde_itens, valor_total, cpf, id_entregador });
 
     if (error) {
         res.status(400).json({ error: 'Dados de pedido inválidos' });
@@ -55,7 +73,7 @@ exports.listarPedido = (req, res) => {
     }
 
     const novoPedido = {
-        id,
+    
         forma_pagto,
         qtde_itens,
         valor_total,
@@ -78,7 +96,7 @@ exports.listarPedido = (req, res) => {
     const { id } = req.params;
     const { forma_pagto, qtde_itens, valor_total, cpf, id_entregador } = req.body;
 
-    const { error } = pedidoSchema.validate({ id, forma_pagto, qtde_itens, valor_total, cpf, id_entregador });
+    const { error } = pedidoSchema.validate({  forma_pagto, qtde_itens, valor_total, cpf, id_entregador });
 
     if (error) {
         res.status(400).json({ error: 'Dados de pedido inválidos' });
