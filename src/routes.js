@@ -46,11 +46,11 @@ router.get('/produtos', produtoController.listarProduto);
 router.get('/produtos/:id', produtoController.buscarProduto);
 router.get('/produtos/nome/:nome_produto', produtoController.buscarProdutoNome);
 //POST: produto
-router.post('/produtos', loginController.autenticarToken, produtoController.adicionarProduto);
+router.post('/produtos', produtoController.adicionarProduto);
 //PATCH
-router.patch('/produtos/:id', loginController.autenticarToken, produtoController.atualizarProduto);
+router.patch('/produtos/:id', produtoController.atualizarProduto);
 //DELETE
-router.delete('/produtos/:id', loginController.autenticarToken, produtoController.deletarProduto);
+router.delete('/produtos/:id', produtoController.deletarProduto);
 
 //Controle Regiao
 const regiaoController = require('./regiaoController');

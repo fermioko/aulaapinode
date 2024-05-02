@@ -18,6 +18,9 @@ const routes = require('./routes'); //CHAMANDO O MÓDULO DAS ROTAS
 //**INCLUIR NOVO **//
 app.use(express.json()); // AQUI TRANSFORMAMOS OS DADOS QUE CHEGAM COMO BINARIO EM JSON
 
+app.use(express.urlencoded({extended: false}));
+
+
 app.use((req, res, next) =>{
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Headers: Content-Type')
